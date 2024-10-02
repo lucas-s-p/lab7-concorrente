@@ -1,25 +1,39 @@
 package br.edu.ufcg.ccc.system;
 
 
-import br.edu.ufcg.ccc.processor.ProcessadorPedido;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import java.util.concurrent.*;
+import br.edu.ufcg.ccc.processor.ProcessadorPedido;
+import br.edu.ufcg.ccc.time_reabastecedor.Reabastecedor;
 
 public class ECommece {
-    private BlockingQueue<Pedido> requestQueue;
-    private ConcurrentHashMap<Produto, Integer> stockQueue;
-    private ExecutorService processadoresDePedidos;
-    private BlockingQueue<Pedido> pedidosProcessados;
+    private final BlockingQueue<Pedido> requestQueue;
+    private final ConcurrentHashMap<Produto, Integer> stockQueue;
+    private final ExecutorService processadoresDePedidos;
+    private final BlockingQueue<Pedido> pedidosProcessados;
+    private final ScheduledExecutorService reabastecedorExecutor;
 
     public ECommece() {
         this.requestQueue = new ArrayBlockingQueue<>(8);
         this.stockQueue = new ConcurrentHashMap<>();
-        this.stockQueue.put(new Produto("produto1", 13L), 10);
+        stockQueue.put(new Produto("produto1", 13L), 10);
         this.pedidosProcessados = new LinkedBlockingQueue<>();
         this.processadoresDePedidos = Executors.newFixedThreadPool(5);
+
         for (int i = 0; i < 5; i++) {
             this.processadoresDePedidos.submit(new ProcessadorPedido(requestQueue, pedidosProcessados, stockQueue));
         }
+
+
+        this.reabastecedorExecutor = Executors.newScheduledThreadPool(1);
+        this.reabastecedorExecutor.scheduleAtFixedRate(new Reabastecedor(this.stockQueue), 0, 10, TimeUnit.SECONDS);
     }
 
     public void criarPedido(Pedido pedido){
@@ -27,5 +41,9 @@ public class ECommece {
             System.out.println("Pedido barrado na fila");
         }
         System.out.println("Pedido Criado");
+    }
+
+    public void adicionarProdutoEstoque(Produto produto) {
+        this.stockQueue.put(produto, 0);
     }
 }

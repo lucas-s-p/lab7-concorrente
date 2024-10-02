@@ -24,7 +24,7 @@ public class Produto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Produto produto = (Produto) o;
-        return preco == produto.preco && Objects.equals(nome, produto.nome);
+        return Objects.equals(nome, produto.nome) && Objects.equals(preco, produto.preco);
     }
 
     @Override

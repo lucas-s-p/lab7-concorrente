@@ -1,26 +1,17 @@
 package br.edu.ufcg.ccc;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import br.edu.ufcg.ccc.client.Client;
 import br.edu.ufcg.ccc.system.ECommece;
-import br.edu.ufcg.ccc.system.ItensPedido;
-import br.edu.ufcg.ccc.system.Pedido;
-import br.edu.ufcg.ccc.system.Produto;
 
 public class Main {
     public static void main(String[] args) {
-        Produto produto = new Produto("produto1", 13L);
-        List<ItensPedido> itensPedidoList = new ArrayList<>();
-        itensPedidoList.add(new ItensPedido(10, produto));
-        List<Pedido> pedidos = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            pedidos.add(new Pedido(itensPedidoList));
-        }
-
         ECommece eCommece = new ECommece();
-        for (Pedido p : pedidos){
-            eCommece.criarPedido(p);
-        }
+        ScheduledExecutorService client = Executors.newScheduledThreadPool(1);
+
+        client.scheduleAtFixedRate(new Client(eCommece), 0, 8, TimeUnit.SECONDS);
     }
 }

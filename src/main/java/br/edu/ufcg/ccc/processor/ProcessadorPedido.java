@@ -29,7 +29,9 @@ public class ProcessadorPedido implements Runnable {
     public void run() {
         try {
             while (true) {
+                // PRIMEIRO OLHA A FILA DE PENDENTES
                 Pedido pedido = pedidosPendentes.poll();
+                // SE NÃO TEM PENDENTES, ENTÃO USA OS  PEDIDOS ATUAIS E QUE NÃO ESTÃO PENDENTES.
                 if (pedido == null) {
                     pedido = filaDePedidos.take();
                 }

@@ -11,20 +11,21 @@ import br.edu.ufcg.ccc.system.Produto;
 public class Client implements Runnable{
 
     private final ECommece eCommece;
+    private final List<ItensPedido> itensPedidos;
 
     public Client(ECommece eCommece) {
         this.eCommece = eCommece;
+        this.itensPedidos = new ArrayList<>();
     }
 
     @Override
     public void run() {
-        Produto produto = new Produto("produto1", 13L);
-        List<ItensPedido> itensPedidoList = new ArrayList<>();
-        itensPedidoList.add(new ItensPedido(10, produto));
-
-        Pedido pedido = new Pedido(itensPedidoList);
-
+        Pedido pedido = new Pedido(this.itensPedidos);
         eCommece.criarPedido(pedido);
+    }
+
+    public void adicionaProduto(Produto produto, int quantidadeDesejada) {
+        this.itensPedidos.add(new ItensPedido(quantidadeDesejada, produto));
     }
     
 }

@@ -23,7 +23,6 @@ public class ECommece {
     public ECommece() {
         this.requestQueue = new ArrayBlockingQueue<>(8);
         this.stockQueue = new ConcurrentHashMap<>();
-        stockQueue.put(new Produto("produto1", 13L), 10);
         this.pedidosProcessados = new LinkedBlockingQueue<>();
         this.processadoresDePedidos = Executors.newFixedThreadPool(5);
 

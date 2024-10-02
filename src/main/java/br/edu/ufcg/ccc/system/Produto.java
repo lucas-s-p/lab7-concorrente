@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class Produto {
     private String nome;
-    private long preco;
+    private float preco;
 
-    public Produto(String nome, long preco) {
+    public Produto(String nome, float preco) {
         this.nome = nome;
         this.preco = preco;
     }
@@ -40,11 +40,11 @@ public class Produto {
         this.nome = nome;
     }
 
-    public long getPreco() {
+    public float getPreco() {
         return preco;
     }
 
-    public void setPreco(long preco) {
+    public void setPreco(float preco) {
         this.preco = preco;
     }
 }

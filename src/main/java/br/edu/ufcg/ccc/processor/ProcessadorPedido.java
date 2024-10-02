@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import br.edu.ufcg.ccc.system.ECommece;
 import br.edu.ufcg.ccc.system.ItensPedido;
 import br.edu.ufcg.ccc.system.Pedido;
 import br.edu.ufcg.ccc.system.Produto;
@@ -13,16 +14,19 @@ public class ProcessadorPedido implements Runnable {
     private final BlockingQueue<Pedido> pedidosProcessados;
     private final ConcurrentHashMap<Produto, Integer> stockQueue;
     private final BlockingQueue<Pedido> pedidosPendentes;
+    private final ECommece ecommerce;
 
     public ProcessadorPedido(
             BlockingQueue<Pedido> filaDePedidos,
             BlockingQueue<Pedido> pedidosProcessados,
-            ConcurrentHashMap<Produto, Integer> stockQueue
+            ConcurrentHashMap<Produto, Integer> stockQueue,
+            ECommece eCommece
     ) {
         this.filaDePedidos = filaDePedidos;
         this.pedidosProcessados = pedidosProcessados;
         this.stockQueue = stockQueue;
         this.pedidosPendentes = new LinkedBlockingQueue<>();
+        this.ecommerce = eCommece;
     }
 
     @Override
@@ -38,12 +42,18 @@ public class ProcessadorPedido implements Runnable {
                 
                 if (processarPedido(pedido)) {
                     pedidosProcessados.add(pedido);
-                    System.out.println("Pedido completo: " + pedido);
-                } else {
-                    System.out.println("Pedido incompleto: " + pedido);
+                    double valorTotal = pedido.getItensPedidos().stream()
+                            .mapToDouble(item -> item.getQuantidade() * item.getProduto().getPreco())
+                            .sum();
+                    ecommerce.incrementarPedidosCompletos(valorTotal);
+                    //System.out.println("Pedido completo: " + pedido); // TIRE O COMENTÁRIO PARA TESTAR
+                }else {
+                    // System.out.println("Pedido incompleto: " + pedido); // TIRE O COMENTÁRIO PARA TESTAR
                     pedidosPendentes.add(pedido);
+                    ecommerce.incrementarPedidosRejeitados();
                 }
-                Thread.sleep(10000);
+
+                Thread.sleep(1000);
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

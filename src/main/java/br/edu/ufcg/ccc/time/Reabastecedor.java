@@ -1,4 +1,4 @@
-package br.edu.ufcg.ccc.time_reabastecedor;
+package br.edu.ufcg.ccc.time;
 
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -1,5 +1,6 @@
 package br.edu.ufcg.ccc.time;
 
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import br.edu.ufcg.ccc.system.Produto;

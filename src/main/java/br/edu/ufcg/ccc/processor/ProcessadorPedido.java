@@ -1,5 +1,6 @@
 package br.edu.ufcg.ccc.processor;
 
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -56,7 +57,7 @@ public class ProcessadorPedido implements Runnable {
                     pedidosPendentes.add(pedido);
                 }
 
-                Thread.sleep(1000);
+                Thread.sleep(new Random().nextLong(0, 2000));
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

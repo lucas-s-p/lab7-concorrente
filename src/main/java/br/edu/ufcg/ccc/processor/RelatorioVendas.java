@@ -15,11 +15,13 @@ public class RelatorioVendas implements Runnable {
         double valorTotalVendas = ecommerce.getValorTotalVendas();
         int pedidosRejeitados = ecommerce.getPedidosRejeitados();
 
-        System.out.println("\n=== Relatório de Vendas ===");
-        System.out.println("Número total de pedidos processados: " + pedidosCompletos);
-        System.out.println("Valor total das vendas: R$ " + valorTotalVendas);
-        System.out.println("Número de pedidos rejeitados: " + pedidosRejeitados);
-        System.out.println("===========================\n");
+        synchronized (System.out){
+            System.out.println("\n=== Relatório de Vendas ===");
+            System.out.println("Número total de pedidos processados: " + pedidosCompletos);
+            System.out.println("Valor total das vendas: R$ " + valorTotalVendas);
+            System.out.println("Número de pedidos rejeitados: " + pedidosRejeitados);
+            System.out.println("===========================\n");
+        }
     }
 }
 

@@ -45,7 +45,7 @@ public class ECommece {
 
 
         this.reabastecedorExecutor = Executors.newScheduledThreadPool(1);
-        this.reabastecedorExecutor.scheduleAtFixedRate(new Reabastecedor(this.stockQueue), 1, 11, TimeUnit.SECONDS);
+        this.reabastecedorExecutor.scheduleAtFixedRate(new Reabastecedor(this.stockQueue), 0, 10, TimeUnit.SECONDS);
 
         // Inicializa o gerador de relatórios
         this.relatorioExecutor = Executors.newScheduledThreadPool(1);

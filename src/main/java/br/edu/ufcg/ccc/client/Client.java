@@ -12,15 +12,17 @@ public class Client implements Runnable{
 
     private final ECommece eCommece;
     private final List<ItensPedido> itensPedidos;
+    private final String nomeCliente;
 
-    public Client(ECommece eCommece) {
+    public Client(ECommece eCommece, String nomeCliente) {
         this.eCommece = eCommece;
         this.itensPedidos = new ArrayList<>();
+        this.nomeCliente = nomeCliente;
     }
 
     @Override
     public void run() {
-        Pedido pedido = new Pedido(this.itensPedidos);
+        Pedido pedido = new Pedido(this.itensPedidos, nomeCliente);
         eCommece.criarPedido(pedido);
     }
 

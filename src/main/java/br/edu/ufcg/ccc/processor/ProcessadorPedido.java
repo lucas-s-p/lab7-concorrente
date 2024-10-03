@@ -2,7 +2,7 @@ package br.edu.ufcg.ccc.processor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import br.edu.ufcg.ccc.system.ECommece;
 import br.edu.ufcg.ccc.system.ItensPedido;
@@ -14,18 +14,22 @@ public class ProcessadorPedido implements Runnable {
     private final BlockingQueue<Pedido> pedidosProcessados;
     private final ConcurrentHashMap<Produto, Integer> stockQueue;
     private final BlockingQueue<Pedido> pedidosPendentes;
+    private final ConcurrentSkipListSet<Integer> idPedidosPendentes;
     private final ECommece ecommerce;
 
     public ProcessadorPedido(
             BlockingQueue<Pedido> filaDePedidos,
             BlockingQueue<Pedido> pedidosProcessados,
             ConcurrentHashMap<Produto, Integer> stockQueue,
+            BlockingQueue<Pedido> pedidosPendentes,
+            ConcurrentSkipListSet<Integer> idPedidosPendentes,
             ECommece eCommece
     ) {
         this.filaDePedidos = filaDePedidos;
         this.pedidosProcessados = pedidosProcessados;
         this.stockQueue = stockQueue;
-        this.pedidosPendentes = new LinkedBlockingQueue<>();
+        this.pedidosPendentes = pedidosPendentes;
+        this.idPedidosPendentes = idPedidosPendentes;
         this.ecommerce = eCommece;
     }
 
@@ -46,11 +50,11 @@ public class ProcessadorPedido implements Runnable {
                             .mapToDouble(item -> item.getQuantidade() * item.getProduto().getPreco())
                             .sum();
                     ecommerce.incrementarPedidosCompletos(valorTotal);
-                    //System.out.println("Pedido completo: " + pedido); // TIRE O COMENTÁRIO PARA TESTAR
+                    System.out.println("Pedido completo: " + pedido); // TIRE O COMENTÁRIO PARA TESTAR
                 }else {
                     // System.out.println("Pedido incompleto: " + pedido); // TIRE O COMENTÁRIO PARA TESTAR
+                    idPedidosPendentes.add(pedido.getId());
                     pedidosPendentes.add(pedido);
-                    ecommerce.incrementarPedidosRejeitados();
                 }
 
                 Thread.sleep(1000);

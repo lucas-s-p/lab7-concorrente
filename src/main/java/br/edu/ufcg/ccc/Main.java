@@ -22,8 +22,8 @@ public class Main {
         eCommece.adicionarProdutoEstoque(produto_1, 8);
 
         // CLIENTES
-        Client clientOne = new  Client(eCommece);
-        Client clienttwo = new  Client(eCommece);
+        Client clientOne = new  Client(eCommece, "A");
+        Client clienttwo = new  Client(eCommece, "B");
 
         //SIMULA COMPRA DO CLIENTE ONE
         clientOne.adicionaProduto(produto, 10);
@@ -34,6 +34,6 @@ public class Main {
         //SIMULA COMPRA DO CLIENTE TWO
         clienttwo.adicionaProduto(produto, 10);
         clienttwo.adicionaProduto(produto_1, 4);
-        client.scheduleAtFixedRate(clienttwo, 0, 8, TimeUnit.SECONDS);
+        client.scheduleAtFixedRate(clienttwo, 0, 15, TimeUnit.SECONDS);
     }
 }

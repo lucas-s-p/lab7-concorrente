@@ -77,7 +77,7 @@ public class ECommece {
     public void criarPedido(Pedido pedido){
         pedido.setId(idPedido.incrementAndGet());
         while (!requestQueue.offer(pedido)){
-            System.out.println("Pedido barrado na fila");
+            //System.out.println("Pedido barrado na fila");
         }
         // System.out.println("Pedido Criado");  // TIRE O COMENTÁRIO PARA TESTAR
     }

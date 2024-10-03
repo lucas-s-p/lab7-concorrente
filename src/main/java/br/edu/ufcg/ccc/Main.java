@@ -32,16 +32,16 @@ public class Main {
         clientOne.adicionaProduto(produto, 10);
         clientOne.adicionaProduto(produto_1, 4);
         ScheduledExecutorService client = Executors.newScheduledThreadPool(8);
-        client.scheduleAtFixedRate(clientOne, 0, 150, TimeUnit.SECONDS);
+        client.scheduleAtFixedRate(clientOne, 0, 5, TimeUnit.SECONDS);
 
         // SIMULA COMPRA DO CLIENTE TWO
         clienttwo.adicionaProduto(produto, 10);
         clienttwo.adicionaProduto(produto_1, 4);
-        client.scheduleAtFixedRate(clienttwo, 0, 150, TimeUnit.SECONDS);
+        client.scheduleAtFixedRate(clienttwo, 0, 5, TimeUnit.SECONDS);
 
         // SIMULA COMPRA DO CLIENTE THREE
         clientThree.adicionaProduto(produto, 4);
         clientThree.adicionaProduto(produto_2, 15);
-        client.scheduleAtFixedRate(clientThree, 0, 150, TimeUnit.SECONDS);
+        client.scheduleAtFixedRate(clientThree, 0, 5, TimeUnit.SECONDS);
     }
 }

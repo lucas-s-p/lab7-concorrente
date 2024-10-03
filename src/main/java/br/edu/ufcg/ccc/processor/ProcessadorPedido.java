@@ -1,6 +1,5 @@
 package br.edu.ufcg.ccc.processor;
 
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -38,13 +37,12 @@ public class ProcessadorPedido implements Runnable {
     public void run() {
         try {
             while (true) {
-                // PRIMEIRO OLHA A FILA DE PENDENTES
                 Pedido pedido = pedidosPendentes.poll();
-                // SE NÃO TEM PENDENTES, ENTÃO USA OS  PEDIDOS ATUAIS E QUE NÃO ESTÃO PENDENTES.
+    
                 if (pedido == null) {
                     pedido = filaDePedidos.take();
                 }
-                
+    
                 if (processarPedido(pedido)) {
                     pedidosProcessados.add(pedido);
                     double valorTotal = pedido.getItensPedidos().stream()
@@ -52,12 +50,12 @@ public class ProcessadorPedido implements Runnable {
                             .sum();
                     ecommerce.incrementarPedidosCompletos(valorTotal);
                     System.out.println(pedido);
-                }else {
+                } else {
                     idPedidosPendentes.add(pedido.getId());
                     pedidosPendentes.add(pedido);
+    
+                    ecommerce.aguardarReabastecimento();
                 }
-
-                Thread.sleep(new Random().nextLong(0, 2000));
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

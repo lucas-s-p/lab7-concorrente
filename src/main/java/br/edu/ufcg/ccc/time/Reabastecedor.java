@@ -1,15 +1,17 @@
 package br.edu.ufcg.ccc.time;
 
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import br.edu.ufcg.ccc.system.ECommece;
 import br.edu.ufcg.ccc.system.Produto;
 
 public class Reabastecedor implements Runnable{
     private final ConcurrentHashMap<Produto, Integer> estoque;
-
-        public Reabastecedor(ConcurrentHashMap<Produto, Integer> estoque) {
+    private final ECommece ecommerce;
+    
+        public Reabastecedor(ConcurrentHashMap<Produto, Integer> estoque, ECommece ecommerce) {
             this.estoque = estoque;
+            this.ecommerce = ecommerce;
         }
 
         @Override
@@ -18,5 +20,6 @@ public class Reabastecedor implements Runnable{
                 estoque.computeIfPresent(produto, (key, value) -> value + 10);
                     System.out.println("Reabastecendo " + produto.getNome() + ": Novo estoque = " + estoque.get(produto));    
             }
+            ecommerce.sinalizarReabastecimento();
         }
 }

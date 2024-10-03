@@ -11,6 +11,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import br.edu.ufcg.ccc.processor.ProcessadorPedido;
 import br.edu.ufcg.ccc.processor.RelatorioVendas;
@@ -28,7 +30,10 @@ public class ECommece {
     private int pedidosCompletos = 0;
     private double valorTotalVendas = 0.0;
 
-    private AtomicInteger idPedido;
+    private final AtomicInteger idPedido;
+
+    private final ReentrantLock reabastecimentoLock = new ReentrantLock();
+    private final Condition reabastecido = reabastecimentoLock.newCondition();
 
     public ECommece() {
         this.requestQueue = new ArrayBlockingQueue<>(8);
@@ -45,11 +50,28 @@ public class ECommece {
 
 
         this.reabastecedorExecutor = Executors.newScheduledThreadPool(1);
-        this.reabastecedorExecutor.scheduleAtFixedRate(new Reabastecedor(this.stockQueue), 0, 10, TimeUnit.SECONDS);
+        this.reabastecedorExecutor.scheduleAtFixedRate(new Reabastecedor(this.stockQueue, this), 0, 10, TimeUnit.SECONDS);
 
-        // Inicializa o gerador de relatórios
         this.relatorioExecutor = Executors.newScheduledThreadPool(1);
         this.relatorioExecutor.scheduleAtFixedRate(new RelatorioVendas(this), 0, 30, TimeUnit.SECONDS);
+    }
+
+    public void sinalizarReabastecimento() {
+        reabastecimentoLock.lock();
+        try {
+            reabastecido.signalAll();
+        } finally {
+            reabastecimentoLock.unlock();
+        }
+    }
+
+    public void aguardarReabastecimento() throws InterruptedException {
+        reabastecimentoLock.lock();
+        try {
+            reabastecido.await();
+        } finally {
+            reabastecimentoLock.unlock();
+        }
     }
 
     public void criarPedido(Pedido pedido){
@@ -64,7 +86,6 @@ public class ECommece {
         this.stockQueue.put(produto, quantidadeProd);
     }
 
-    // Métodos para atualizar contadores
     public synchronized void incrementarPedidosCompletos(double valor) {
         pedidosCompletos++;
         valorTotalVendas += valor;

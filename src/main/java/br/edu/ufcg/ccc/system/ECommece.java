@@ -1,6 +1,7 @@
 package br.edu.ufcg.ccc.system;
 
 
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,9 +44,10 @@ public class ECommece {
         this.idPedido = new AtomicInteger(0);
         this.pedidosPendentes = new LinkedBlockingQueue<>();
         this.idPedidosPendentes = new ConcurrentSkipListSet<>();
+        Object processLock = new Object();
 
         for (int i = 0; i < 5; i++) {
-            this.processadoresDePedidos.submit(new ProcessadorPedido(requestQueue, pedidosProcessados, stockQueue, pedidosPendentes, idPedidosPendentes, this));
+            this.processadoresDePedidos.submit(new ProcessadorPedido(requestQueue, pedidosProcessados, stockQueue, pedidosPendentes, idPedidosPendentes, processLock, this));
         }
 
 

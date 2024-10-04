@@ -1,5 +1,7 @@
 package br.edu.ufcg.ccc.processor;
 
+import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -15,6 +17,7 @@ public class ProcessadorPedido implements Runnable {
     private final ConcurrentHashMap<Produto, Integer> stockQueue;
     private final BlockingQueue<Pedido> pedidosPendentes;
     private final ConcurrentSkipListSet<Integer> idPedidosPendentes;
+    private final Object processLock;
     private final ECommece ecommerce;
 
     public ProcessadorPedido(
@@ -22,7 +25,7 @@ public class ProcessadorPedido implements Runnable {
             BlockingQueue<Pedido> pedidosProcessados,
             ConcurrentHashMap<Produto, Integer> stockQueue,
             BlockingQueue<Pedido> pedidosPendentes,
-            ConcurrentSkipListSet<Integer> idPedidosPendentes,
+            ConcurrentSkipListSet<Integer> idPedidosPendentes, Object processLock,
             ECommece eCommece
     ) {
         this.filaDePedidos = filaDePedidos;
@@ -30,6 +33,7 @@ public class ProcessadorPedido implements Runnable {
         this.stockQueue = stockQueue;
         this.pedidosPendentes = pedidosPendentes;
         this.idPedidosPendentes = idPedidosPendentes;
+        this.processLock = processLock;
         this.ecommerce = eCommece;
     }
 
@@ -62,27 +66,28 @@ public class ProcessadorPedido implements Runnable {
         }
     }
 
-    private boolean processarPedido(Pedido pedido) {
+    private boolean processarPedido(Pedido pedido) throws InterruptedException {
         boolean pedidoCompleto = true;
-
-        for (ItensPedido item : pedido.getItensPedidos()) {
-            Produto produto = item.getProduto();
-            int quantidadeDesejada = item.getQuantidade();
-            Integer quantidadeEmEstoque = stockQueue.get(produto);
-            if (quantidadeEmEstoque == null || quantidadeEmEstoque < quantidadeDesejada) {
-                pedidoCompleto = false;
-                break;
-            }
-        }
-
-        if (pedidoCompleto) {
+        synchronized (processLock) {
             for (ItensPedido item : pedido.getItensPedidos()) {
                 Produto produto = item.getProduto();
                 int quantidadeDesejada = item.getQuantidade();
-                stockQueue.computeIfPresent(produto, (key, value) -> value - quantidadeDesejada);
+                if (stockQueue.get(produto) == null || stockQueue.get(produto) < quantidadeDesejada) {
+                    pedidoCompleto = false;
+                    break;
+                }
             }
-        }
 
-        return pedidoCompleto;
+            if (pedidoCompleto) {
+                for (ItensPedido item : pedido.getItensPedidos()) {
+                    Produto produto = item.getProduto();
+                    int quantidadeDesejada = item.getQuantidade();
+                    stockQueue.computeIfPresent(produto, (key, value) -> value - quantidadeDesejada);
+                }
+            }
+
+            Thread.sleep(new Random().nextLong(100, 2000));
+            return pedidoCompleto;
+        }
     }
 }

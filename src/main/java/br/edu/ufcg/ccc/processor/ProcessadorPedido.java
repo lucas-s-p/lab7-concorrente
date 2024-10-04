@@ -1,7 +1,5 @@
 package br.edu.ufcg.ccc.processor;
 
-import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;

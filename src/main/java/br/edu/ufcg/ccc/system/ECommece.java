@@ -1,7 +1,5 @@
 package br.edu.ufcg.ccc.system;
 
-
-import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;

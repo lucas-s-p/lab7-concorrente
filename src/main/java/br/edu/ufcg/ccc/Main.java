@@ -32,12 +32,12 @@ public class Main {
         clientOne.adicionaProduto(produto, 10);
         clientOne.adicionaProduto(produto_1, 4);
         ScheduledExecutorService client = Executors.newScheduledThreadPool(8);
-        client.scheduleAtFixedRate(clientOne, 0, 5, TimeUnit.SECONDS);
+        client.scheduleAtFixedRate(clientOne, 0, 15, TimeUnit.SECONDS);
 
         // SIMULA COMPRA DO CLIENTE TWO
         clienttwo.adicionaProduto(produto, 10);
         clienttwo.adicionaProduto(produto_1, 4);
-        client.scheduleAtFixedRate(clienttwo, 0, 5, TimeUnit.SECONDS);
+        client.scheduleAtFixedRate(clienttwo, 0, 8, TimeUnit.SECONDS);
 
         // SIMULA COMPRA DO CLIENTE THREE
         clientThree.adicionaProduto(produto, 4);

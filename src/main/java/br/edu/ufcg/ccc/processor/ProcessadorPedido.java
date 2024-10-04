@@ -85,9 +85,7 @@ public class ProcessadorPedido implements Runnable {
                     stockQueue.computeIfPresent(produto, (key, value) -> value - quantidadeDesejada);
                 }
             }
-
-            Thread.sleep(new Random().nextLong(100, 2000));
-            return pedidoCompleto;
         }
+        return pedidoCompleto;
     }
 }

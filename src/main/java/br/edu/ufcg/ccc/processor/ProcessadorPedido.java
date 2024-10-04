@@ -53,7 +53,9 @@ public class ProcessadorPedido implements Runnable {
                             .mapToDouble(item -> item.getQuantidade() * item.getProduto().getPreco())
                             .sum();
                     ecommerce.incrementarPedidosCompletos(valorTotal);
-                    System.out.println(pedido);
+                    synchronized (System.out){
+                        System.out.println(pedido);
+                    }
                 } else {
                     idPedidosPendentes.add(pedido.getId());
                     pedidosPendentes.add(pedido);

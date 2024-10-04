@@ -19,7 +19,9 @@ public class Reabastecedor implements Runnable{
             synchronized (estoque) {
                 for (Produto produto : estoque.keySet()) {
                     estoque.computeIfPresent(produto, (key, value) -> value + 10);
-                        System.out.println("Reabastecendo " + produto.getNome() + ": Novo estoque = " + estoque.get(produto));    
+                    synchronized (System.out){
+                        System.out.println("Reabastecendo " + produto.getNome() + ": Novo estoque = " + estoque.get(produto));
+                    }
                 }
                 ecommerce.sinalizarReabastecimento();
             }
